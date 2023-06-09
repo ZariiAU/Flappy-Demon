@@ -36,6 +36,10 @@ public class Player : MonoBehaviour
     {
         if (collision.collider.GetComponentInParent<Pipe>())
         {
+            if(scoreKeeper.Score > scoreKeeper.HighScore)
+            {
+                scoreKeeper.HighScore = scoreKeeper.Score;
+            }
             SceneManager.LoadScene(0);
         }
     }
