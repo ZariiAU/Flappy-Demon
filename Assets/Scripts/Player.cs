@@ -24,7 +24,9 @@ public class Player : MonoBehaviour
         playerDied.AddListener(() =>
         {
             // Launch the Player on death
-            rb.AddForce(new Vector2(1000,1000));
+            rb.AddForce(new Vector2(700,700));
+            rb.constraints = RigidbodyConstraints2D.None;
+            rb.AddTorque(50);
 
             // Update the Highscore
             if (scoreKeeper.Score > scoreKeeper.HighScore)
