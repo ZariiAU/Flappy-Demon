@@ -6,6 +6,7 @@ public class GameManager : MonoBehaviour
 {
     Player player;
     [SerializeField] List<Pipe> pipes;
+    [SerializeField] List<ParallaxBackground> parallaxBackgrounds;
     public GameObject gameLostUI;
     public bool hasLost = false;
 
@@ -30,11 +31,29 @@ public class GameManager : MonoBehaviour
         player = FindObjectOfType<Player>();
 
         Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
 
         player.playerDied.AddListener(() =>
         {
             hasLost = true;
-            
+
+            // Stop background
+            foreach (ParallaxBackground parallaxBackground in parallaxBackgrounds)
+            {
+                parallaxBackground.xSpeed = 0;
+                parallaxBackground.ySpeed = 0;
+            }
+
+            // Stop Pipes
+            foreach(Pipe pipe in pipes)
+            {
+                pipe.xSpeed = 0;
+                pipe.ySpeed = 0;
+                foreach (Collider c in pipe.GetComponentsInChildren<Collider>())
+                {
+                    c.enabled = false;
+                }
+            }
         });
     }
 
@@ -45,12 +64,15 @@ public class GameManager : MonoBehaviour
         {
             EnableLossUI();
             player.disableInputs = true;
+            StartCoroutine(DelayedTimeScaleZero());
         }
     }
 
     void EnableLossUI()
     {
         gameLostUI.SetActive(true);
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
         foreach (ScoreTextUI UI in gameLostUI.GetComponentsInChildren<ScoreTextUI>())
         {
             if (UI.scoreType == ScoreUIType.CurrentScore)
@@ -58,5 +80,11 @@ public class GameManager : MonoBehaviour
             else if (UI.scoreType == ScoreUIType.Highscore)
                 UI.ChangeText(ScoreKeeper.Instance.HighScore.ToString());
         }
+    }
+
+    IEnumerator DelayedTimeScaleZero()
+    {
+        yield return new WaitForSeconds(4);
+        Time.timeScale = 0;
     }
 }

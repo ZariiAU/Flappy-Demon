@@ -8,6 +8,7 @@ public class Player : MonoBehaviour
 {
     Rigidbody2D rb;
     [SerializeField] private ScoreKeeper scoreKeeper;
+    public UnityEvent playerTouchedCheckpoint;
     public UnityEvent playerDied;
     public float force;
     public bool disableInputs;
@@ -15,34 +16,50 @@ public class Player : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        scoreKeeper = ScoreKeeper.Instance;
+
         rb = GetComponent<Rigidbody2D>();
+
+        
+        playerDied.AddListener(() =>
+        {
+            // Launch the Player on death
+            rb.AddForce(new Vector2(1000,1000));
+
+            // Update the Highscore
+            if (scoreKeeper.Score > scoreKeeper.HighScore)
+            {
+                scoreKeeper.HighScore = scoreKeeper.Score;
+            }
+        });
+
+        // Update the score
+        playerTouchedCheckpoint.AddListener(() => { scoreKeeper.Score++; });
     }
 
-    // Update is called once per frame
     void Update()
     {
+        // Bounce the player upwards on Spacebar
         if (Input.GetKeyDown(KeyCode.Space) && !disableInputs)
         {
             rb.velocity = Vector2.zero;
             rb.AddForce(transform.up * force);
         }
-
     }
+
+    // Check for gap between Pipes to add score
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if (collision.gameObject.CompareTag("Checkpoint"))
         {
-            scoreKeeper.Score++;
+            playerTouchedCheckpoint.Invoke();
         }
     }
+
     private void OnCollisionEnter2D(Collision2D collision)
     {
         if (collision.collider.GetComponentInParent<Pipe>())
         {
-            if(scoreKeeper.Score > scoreKeeper.HighScore)
-            {
-                scoreKeeper.HighScore = scoreKeeper.Score;
-            }
             playerDied.Invoke();
         }
     }
