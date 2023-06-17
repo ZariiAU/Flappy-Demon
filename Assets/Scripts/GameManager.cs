@@ -36,6 +36,11 @@ public class GameManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        if(Application.platform == RuntimePlatform.Android)
+        {
+            Application.targetFrameRate = 144;
+        }
+
         Time.timeScale = 1;
         player = FindObjectOfType<Player>();
 

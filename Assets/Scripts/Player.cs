@@ -41,6 +41,21 @@ public class Player : MonoBehaviour
 
     void Update()
     {
+        // Mobile input
+        if(Application.platform == RuntimePlatform.Android)
+        {
+            foreach(Touch touch in Input.touches)
+            {
+                if(touch.phase == TouchPhase.Began)
+                {
+                    if (!GameManager.Instance.gameStarted) GameManager.Instance.StartGame();
+                    playerJumped.Invoke();
+                    rb.velocity = Vector2.zero;
+                    rb.AddForce(transform.up * force);
+                }
+            }
+        }
+
         // Bounce the player upwards on Spacebar
         if (Input.GetKeyDown(KeyCode.Space) && !disableInputs)
         {

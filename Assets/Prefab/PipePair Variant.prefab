@@ -51,7 +51,7 @@ MonoBehaviour:
   m_Color: {r: 0.9339623, g: 0.3410784, b: 0, a: 1}
   m_Intensity: 2.14
   m_LightVolumeIntensity: 0.03
-  m_LightVolumeIntensityEnabled: 1
+  m_LightVolumeIntensityEnabled: 0
   m_ApplyToSortingLayers: d16ffcb1
   m_LightCookieSprite: {fileID: 0}
   m_DeprecatedPointLightCookieSprite: {fileID: 0}
@@ -162,7 +162,7 @@ MonoBehaviour:
   m_Color: {r: 0.9339623, g: 0.3410784, b: 0, a: 1}
   m_Intensity: 2.14
   m_LightVolumeIntensity: 0.03
-  m_LightVolumeIntensityEnabled: 1
+  m_LightVolumeIntensityEnabled: 0
   m_ApplyToSortingLayers: d16ffcb1
   m_LightCookieSprite: {fileID: 0}
   m_DeprecatedPointLightCookieSprite: {fileID: 0}
