@@ -41,9 +41,14 @@ public class Player : MonoBehaviour
 
     void Update()
     {
+        // Unlock the player gravity
+        if (GameManager.Instance.gameStarted)
+            rb.bodyType = RigidbodyType2D.Dynamic;
+
         // Bounce the player upwards on Spacebar
         if (Input.GetKeyDown(KeyCode.Space) && !disableInputs)
         {
+            if(!GameManager.Instance.gameStarted) GameManager.Instance.StartGame();
             playerJumped.Invoke();
             rb.velocity = Vector2.zero;
             rb.AddForce(transform.up * force);
@@ -61,7 +66,7 @@ public class Player : MonoBehaviour
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        if (collision.collider.GetComponentInParent<Pipe>())
+        if (collision.collider.GetComponentInParent<Pipe>() || collision.collider.CompareTag("Bad"))
         {
             playerDied.Invoke();
         }

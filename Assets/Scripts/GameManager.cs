@@ -10,8 +10,10 @@ public class GameManager : MonoBehaviour
     [SerializeField] List<ParallaxBackground> parallaxBackgrounds;
     public GameObject gameScoreUI;
     public GameObject gameLostUI;
+    public GameObject buttonPrompt;
     public GameObject quitButton;
     public bool hasLost = false;
+    public bool gameStarted = false;
 
     public static GameManager Instance { get; private set; }
 
@@ -75,6 +77,7 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    // TODO: Animate this somehow
     void EnableLossUI()
     {
         gameLostUI.SetActive(true);
@@ -123,5 +126,11 @@ public class GameManager : MonoBehaviour
             Cursor.lockState = CursorLockMode.Locked ;
             Cursor.visible = false;
         }
+    }
+
+    public void StartGame()
+    {
+        gameStarted = true;
+        buttonPrompt.SetActive(false); // TODO: Animate this fading out
     }
 }

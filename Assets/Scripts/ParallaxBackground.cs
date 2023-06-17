@@ -12,12 +12,15 @@ public class ParallaxBackground : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if(transform.position.x >= xMinBounds)
-            transform.position = new Vector2(transform.position.x + xSpeed * Time.deltaTime, transform.position.y);
-        else
+        if (GameManager.Instance.gameStarted)
         {
-            // Completely unfair randomiser. TODO: Base the distance of the next pipe on the previous one
-            transform.position = new Vector2(xMaxBounds , transform.position.y);
+            if (transform.position.x >= xMinBounds)
+                transform.position = new Vector2(transform.position.x + xSpeed * Time.deltaTime, transform.position.y);
+            else
+            {
+                // Completely unfair randomiser. TODO: Base the distance of the next pipe on the previous one
+                transform.position = new Vector2(xMaxBounds, transform.position.y);
+            }
         }
     }
 }
