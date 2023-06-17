@@ -62,7 +62,7 @@ public class GameManager : MonoBehaviour
 
         if(Application.platform != RuntimePlatform.Android || Application.platform != RuntimePlatform.IPhonePlayer)
         {
-            quitButton.SetActive(false);
+            quitButton.SetActive(true);
         }
     }
 
