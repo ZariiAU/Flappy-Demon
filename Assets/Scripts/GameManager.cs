@@ -64,10 +64,12 @@ public class GameManager : MonoBehaviour
             }
         });
 
-        if( Application.platform != RuntimePlatform.WebGLPlayer || Application.platform != RuntimePlatform.Android || Application.platform != RuntimePlatform.IPhonePlayer)
+        if(Application.platform == RuntimePlatform.WebGLPlayer || Application.platform == RuntimePlatform.Android || Application.platform == RuntimePlatform.IPhonePlayer)
         {
-            quitButton.SetActive(true);
+            quitButton.SetActive(false);
         }
+        else
+            quitButton.SetActive(true);
     }
 
     // Update is called once per frame
