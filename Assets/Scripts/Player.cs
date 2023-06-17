@@ -41,10 +41,6 @@ public class Player : MonoBehaviour
 
     void Update()
     {
-        // Unlock the player gravity
-        if (GameManager.Instance.gameStarted)
-            rb.bodyType = RigidbodyType2D.Dynamic;
-
         // Bounce the player upwards on Spacebar
         if (Input.GetKeyDown(KeyCode.Space) && !disableInputs)
         {
@@ -70,5 +66,13 @@ public class Player : MonoBehaviour
         {
             playerDied.Invoke();
         }
+    }
+
+    public void ToggleKinematic()
+    {
+        if (rb.bodyType == RigidbodyType2D.Kinematic)
+            rb.bodyType = RigidbodyType2D.Dynamic;
+        else
+            rb.bodyType = RigidbodyType2D.Kinematic;
     }
 }

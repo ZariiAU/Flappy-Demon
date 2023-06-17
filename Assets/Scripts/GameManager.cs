@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
@@ -8,9 +9,12 @@ public class GameManager : MonoBehaviour
     Player player;
     [SerializeField] List<Pipe> pipes;
     [SerializeField] List<ParallaxBackground> parallaxBackgrounds;
-    public GameObject gameScoreUI;
-    public GameObject gameLostUI;
-    public GameObject buttonPrompt;
+    [SerializeField] List<GameObject> UIToDisableOnStart;
+    [SerializeField] List<GameObject> UIToDisableOnEnd;
+    [SerializeField] List<GameObject> UIToEnableOnEnd;
+    [SerializeField] List<GameObject> UIToEnableOnStart;
+    public UnityEvent GameStarted;
+
     public GameObject quitButton;
     public bool hasLost = false;
     public bool gameStarted = false;
@@ -85,13 +89,10 @@ public class GameManager : MonoBehaviour
     // TODO: Animate this somehow
     void EnableLossUI()
     {
-        gameLostUI.SetActive(true);
-        gameScoreUI.SetActive(false);
-        ToggleCursorVisibleLocked(true);
-
-        if (gameLostUI.activeSelf)
+        foreach (GameObject ui in UIToEnableOnEnd)
         {
-            foreach (ScoreTextUI UI in gameLostUI.GetComponentsInChildren<ScoreTextUI>())
+            ui.SetActive(true);
+            foreach (ScoreTextUI UI in ui.GetComponentsInChildren<ScoreTextUI>())
             {
                 if (UI.scoreType == ScoreUIType.CurrentScore)
                     UI.ChangeText(ScoreKeeper.Instance.Score);
@@ -99,6 +100,11 @@ public class GameManager : MonoBehaviour
                     UI.ChangeText(ScoreKeeper.Instance.HighScore);
             }
         }
+        foreach (GameObject ui in UIToDisableOnEnd)
+        {
+            ui.SetActive(false);
+        }
+        ToggleCursorVisibleLocked(true);
     }
 
     IEnumerator DelayedTimeScaleZero()
@@ -135,7 +141,24 @@ public class GameManager : MonoBehaviour
 
     public void StartGame()
     {
+        GameStarted.Invoke();
         gameStarted = true;
-        buttonPrompt.SetActive(false); // TODO: Animate this fading out
+        foreach(GameObject ui in UIToDisableOnStart)
+        {
+            if (ui.GetComponentInChildren<Mover>())
+            {
+                ui.GetComponentInChildren<Mover>().shouldMove = true;
+            }
+        }
+        StartCoroutine(HideTitleUI());
+    }
+
+    IEnumerator HideTitleUI()
+    {
+        yield return new WaitForSeconds(1);
+        foreach (GameObject ui in UIToDisableOnStart)
+            ui.SetActive(false);
+        foreach (GameObject ui in UIToEnableOnStart)
+            ui.SetActive(true);
     }
 }
