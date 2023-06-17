@@ -64,7 +64,7 @@ public class GameManager : MonoBehaviour
             }
         });
 
-        if(Application.platform != RuntimePlatform.Android || Application.platform != RuntimePlatform.IPhonePlayer)
+        if( Application.platform != RuntimePlatform.WebGLPlayer || Application.platform != RuntimePlatform.Android || Application.platform != RuntimePlatform.IPhonePlayer)
         {
             quitButton.SetActive(true);
         }
@@ -94,7 +94,7 @@ public class GameManager : MonoBehaviour
             ui.SetActive(true);
             foreach (ScoreTextUI UI in ui.GetComponentsInChildren<ScoreTextUI>())
             {
-                if (UI.scoreType == ScoreUIType.CurrentScore)
+                if (UI.scoreType == ScoreUIType.CurrentScore && UI.gameObject.activeSelf)
                     UI.ChangeText(ScoreKeeper.Instance.Score);
                 else if (UI.scoreType == ScoreUIType.Highscore)
                     UI.ChangeText(ScoreKeeper.Instance.HighScore);

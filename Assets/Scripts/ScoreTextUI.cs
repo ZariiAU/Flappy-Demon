@@ -10,7 +10,7 @@ public class ScoreTextUI : MonoBehaviour
     public ScoreUIType scoreType;
 
     // Start is called before the first frame update
-    void Start()
+    void Awake()
     {
         textBox = GetComponent<TMP_Text>();
     }
