@@ -9,6 +9,7 @@ public class Player : MonoBehaviour
     Rigidbody2D rb;
     [SerializeField] private ScoreKeeper scoreKeeper;
     public UnityEvent playerTouchedCheckpoint;
+    public UnityEvent playerJumped;
     public UnityEvent playerDied;
     public float force;
     public bool disableInputs;
@@ -19,7 +20,6 @@ public class Player : MonoBehaviour
         scoreKeeper = ScoreKeeper.Instance;
 
         rb = GetComponent<Rigidbody2D>();
-
         
         playerDied.AddListener(() =>
         {
@@ -44,6 +44,7 @@ public class Player : MonoBehaviour
         // Bounce the player upwards on Spacebar
         if (Input.GetKeyDown(KeyCode.Space) && !disableInputs)
         {
+            playerJumped.Invoke();
             rb.velocity = Vector2.zero;
             rb.AddForce(transform.up * force);
         }
