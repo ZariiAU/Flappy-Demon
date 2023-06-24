@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class GameManager : MonoBehaviour
 {
@@ -13,6 +14,9 @@ public class GameManager : MonoBehaviour
     [SerializeField] List<GameObject> UIToDisableOnEnd;
     [SerializeField] List<GameObject> UIToEnableOnEnd;
     [SerializeField] List<GameObject> UIToEnableOnStart;
+    [SerializeField] List<GameObject> UIToEnableOnPause;
+    [SerializeField] List<Button> BackButtons;
+
     public UnityEvent GameStarted;
 
     public GameObject quitButton;
@@ -40,6 +44,13 @@ public class GameManager : MonoBehaviour
         player = FindObjectOfType<Player>();
 
         ToggleCursorVisibleLocked(false);
+
+        foreach(Button button in BackButtons)
+        {
+            button.onClick.AddListener(() => {
+                ToggleAllUI(true);
+            });
+        }
 
         player.playerDied.AddListener(() =>
         {
@@ -75,21 +86,65 @@ public class GameManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Escape) && Application.platform == RuntimePlatform.WindowsPlayer)
+        if (Input.GetKeyDown(KeyCode.Escape))
         {
-            QuitApplication();
+            foreach (GameObject ui in UIToEnableOnPause)
+                ui.SetActive(true);
+
+            ToggleAllUI(false);
+            
+            
         }
 
-        if (hasLost)
+
+        if (Input.GetKeyDown(KeyCode.Space) && hasLost) ReloadScene();
+
+    }
+
+    public void ToggleAllUI(bool on)
+    {
+        if (on)
         {
-            EnableLossUI();
-            player.disableInputs = true;
-            StartCoroutine(DelayedTimeScaleZero());
+            if (gameStarted && !hasLost)
+            {
+                foreach (GameObject ui in UIToEnableOnStart)
+                    ui.SetActive(true);
+            }
+            else if (hasLost)
+            {
+                foreach (GameObject ui in UIToEnableOnEnd)
+                    EnableLossUI();
+            }
+            else
+            {
+                foreach (GameObject ui in UIToDisableOnStart)
+                    ui.SetActive(true);
+
+            }
+            ToggleCursorVisibleLocked(false);
+        }
+        else {
+            if (gameStarted && !hasLost)
+            {
+                foreach (GameObject ui in UIToEnableOnStart)
+                    ui.SetActive(false);
+            }
+            else if (hasLost)
+            {
+                foreach (GameObject ui in UIToEnableOnEnd)
+                    ui.SetActive(false);
+            }
+            else
+            {
+                foreach (GameObject ui in UIToDisableOnStart)
+                    ui.SetActive(false);
+            }
+            ToggleCursorVisibleLocked(true);
         }
     }
 
     // TODO: Animate this somehow
-    void EnableLossUI()
+    public void EnableLossUI()
     {
         foreach (GameObject ui in UIToEnableOnEnd)
         {
@@ -109,7 +164,7 @@ public class GameManager : MonoBehaviour
         ToggleCursorVisibleLocked(true);
     }
 
-    IEnumerator DelayedTimeScaleZero()
+    public IEnumerator DelayedTimeScaleZero()
     {
         yield return new WaitForSeconds(4);
         Time.timeScale = 0;
@@ -141,6 +196,20 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    public void ToggleCursorVisibleLocked()
+    {
+        if (Cursor.lockState != CursorLockMode.None)
+        {
+            Cursor.lockState = CursorLockMode.None;
+            Cursor.visible = true;
+        }
+        else
+        {
+            Cursor.lockState = CursorLockMode.Locked;
+            Cursor.visible = false;
+        }
+    }
+
     public void StartGame()
     {
         GameStarted.Invoke();
@@ -153,6 +222,14 @@ public class GameManager : MonoBehaviour
             }
         }
         StartCoroutine(HideTitleUI());
+    }
+
+    public void HideTitleUIInstant()
+    {
+        foreach (GameObject ui in UIToDisableOnStart)
+            ui.SetActive(false);
+        foreach (GameObject ui in UIToEnableOnStart)
+            ui.SetActive(true);
     }
 
     IEnumerator HideTitleUI()

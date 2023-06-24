@@ -13,11 +13,13 @@ public class Player : MonoBehaviour
     public UnityEvent playerDied;
     public float force;
     public bool disableInputs;
+    GameManager gm;
 
     // Start is called before the first frame update
     void Start()
     {
         scoreKeeper = ScoreKeeper.Instance;
+        gm = GameManager.Instance;
 
         rb = GetComponent<Rigidbody2D>();
         
@@ -33,6 +35,9 @@ public class Player : MonoBehaviour
             {
                 scoreKeeper.HighScore = scoreKeeper.Score;
             }
+            gm.EnableLossUI();
+            disableInputs = true;
+            StartCoroutine(gm.DelayedTimeScaleZero());
         });
 
         // Update the score
@@ -44,6 +49,7 @@ public class Player : MonoBehaviour
         // Bounce the player upwards on Spacebar
         if (Input.GetKeyDown(KeyCode.Space) && !disableInputs)
         {
+            
             if(!GameManager.Instance.gameStarted) GameManager.Instance.StartGame();
             playerJumped.Invoke();
             rb.velocity = Vector2.zero;
